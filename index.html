@@ -10,16 +10,26 @@
       padding: 40px;
       background: #f5f5f5;
     }
+
     img {
       max-width: 90vw;
       height: auto;
       box-shadow: 0 4px 12px rgba(0,0,0,0.2);
       background: #fff;
     }
+
+    #message {
+      font-size: 18px;
+      margin-bottom: 20px;
+      color: #333;
+    }
   </style>
 </head>
 <body>
   <h1>今日の一枚おみくじ</h1>
+
+  <p id="message"></p>
+
   <img id="omikuji" src="" alt="おみくじ画像">
 
   <script>
@@ -28,15 +38,44 @@
     const baseName = "omikuji_"; // ファイル名の頭
     const ext = ".png"; // 拡張子
 
-    // 1〜imageCount の中からランダム
-    const n = Math.floor(Math.random() * imageCount) + 1;
+    const message = document.getElementById("message");
+    const omikuji = document.getElementById("omikuji");
 
-    // 2桁ゼロ埋め（01, 02, ... 100）
-    const numStr = String(n).padStart(2, "0");
+    // 今日の日付を取得
+    const today = new Date().toLocaleDateString("ja-JP", {
+      timeZone: "Asia/Tokyo",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
+    });
 
-    // 完成したパスを img にセット
+    // 保存されている日付と結果を取得
+    const savedDate = localStorage.getItem("omikuji_date");
+    const savedResult = localStorage.getItem("omikuji_result");
+
+    let numStr;
+
+    if (savedDate === today && savedResult) {
+      // 今日すでに引いている場合
+      numStr = savedResult;
+      message.textContent = "今日はもう引いています。今日のおみくじはこちら！";
+    } else {
+      // 今日まだ引いていない場合
+      const n = Math.floor(Math.random() * imageCount) + 1;
+
+      // 01, 02, ... 100 にする
+      numStr = String(n).padStart(2, "0");
+
+      // 今日の日付と結果を保存
+      localStorage.setItem("omikuji_date", today);
+      localStorage.setItem("omikuji_result", numStr);
+
+      message.textContent = "今日のおみくじ結果はこちら！";
+    }
+
+    // 画像を表示
     const imgPath = basePath + baseName + numStr + ext;
-    document.getElementById("omikuji").src = imgPath;
+    omikuji.src = imgPath;
   </script>
 </body>
 </html>
