@@ -74,8 +74,17 @@
     }
 
     // 画像を表示
-    const imgPath = basePath + baseName + numStr + ext;
-    omikuji.src = imgPath;
+   const imgPath = basePath + baseName + numStr + ext + "?v=3";
+
+omikuji.onerror = function () {
+  message.textContent = "画像の読み込みに失敗しました。再読み込みしています...";
+
+  setTimeout(function () {
+    omikuji.src = basePath + baseName + numStr + ext + "?v=" + Date.now();
+  }, 500);
+};
+
+omikuji.src = imgPath;
   </script>
 </body>
 </html>
